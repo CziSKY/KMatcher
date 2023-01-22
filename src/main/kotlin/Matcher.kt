@@ -22,7 +22,7 @@ class Matcher<R, O>(val value: O) {
     }
 }
 
-class MatcherBranch<R, O>(val value: O, val bool: Boolean, val result: (O) -> R) {
+class MatcherBranch<R, O>(val value: O, val bool: Boolean, val result: O.() -> R) {
 
     fun get(): R? {
         return when {
