@@ -13,9 +13,9 @@ object Test1 {
     @Test
     fun test() {
         println(matcher(VoiceRecording("Joe", "voicerecording.org/id/123")) {
-            caseType<Email> { "You got an email from $sender with title: $title" }
-            caseType<SMS> { "You got an SMS from $caller! Message: $message" }
-            caseType<VoiceRecording> { "You received a Voice Recording from $contactName! Click the link to hear it: $link" }
+            case<Email> { "You got an email from $sender with title: $title" }
+            case<SMS> { "You got an SMS from $caller! Message: $message" }
+            case<VoiceRecording> { "You received a Voice Recording from $contactName! Click the link to hear it: $link" }
             default("Match error.")
         }.match())
     }
