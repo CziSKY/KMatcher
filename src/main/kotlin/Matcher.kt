@@ -7,7 +7,7 @@ class Matcher<R, O>(val value: O) {
         branches += MatcherBranch(value = value, bool = block.invoke(value), result = result)
     }
 
-    inline fun <reified T> case(block: (T) -> Boolean = { true }, noinline result: T.() -> R) {
+    inline fun <reified T> caseType(block: (T) -> Boolean = { true }, noinline result: T.() -> R) {
         (value as? T)?.apply {
             branches += MatcherBranch(value = this, bool = block.invoke(this), result = result)
         }
