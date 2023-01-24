@@ -1,7 +1,6 @@
-@Suppress("UNCHECKED_CAST")
 class Matcher<R, O>(val value: O) {
 
-    val branches = mutableListOf<MatcherBranch<*, *>>()
+    val branches = mutableListOf<MatcherBranch<R, *>>()
 
     fun case(block: (O) -> Boolean, result: O.() -> R) {
         branches += MatcherBranch(value = value, bool = block.invoke(value), result = result)
@@ -19,7 +18,7 @@ class Matcher<R, O>(val value: O) {
     }
 
     fun match(): R {
-        return branches.firstNotNullOfOrNull { it.get() } as R? ?: error("Match error.")
+        return branches.firstNotNullOfOrNull { it.get() } ?: error("Match error.")
     }
 }
 
@@ -35,6 +34,13 @@ class MatcherBranch<R, O>(val value: O, val bool: Boolean, val result: O.() -> R
 
 fun <R, O> matcher(value: O, func: Matcher<R, O>.() -> Unit): Matcher<R, O> {
     return Matcher<R, O>(value).apply {
+        func.invoke(this)
+    }
+}
+
+@JvmName("extensionMatcher")
+fun <R, O> O.matcher(func: Matcher<R, O>.() -> Unit): Matcher<R, O> {
+    return Matcher<R, O>(this).apply {
         func.invoke(this)
     }
 }
