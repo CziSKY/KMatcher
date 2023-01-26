@@ -15,7 +15,7 @@ object Test1 {
         println(matcher(VoiceRecording("Joe", "voicerecording.org/id/123")) {
             case<Email> { "You got an email from $sender with title: $title" }
             case<SMS> { "You got an SMS from $caller! Message: $message" }
-            case<VoiceRecording> { "You received a Voice Recording from $contactName! Click the link to hear it: $link" }
+            case<VoiceRecording>({ it.contactName == "闲蛋" }) { "You received a Voice Recording from $contactName! Click the link to hear it: $link" }
             default("Match error.")
         }.match())
     }

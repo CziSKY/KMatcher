@@ -3,33 +3,36 @@ class Matcher<R, O>(val value: O) {
     val branches = mutableListOf<MatcherBranch<R, *>>()
 
     fun case(block: (O) -> Boolean, result: O.() -> R) {
-        branches += MatcherBranch(value = value, bool = block.invoke(value), result = result)
+        if (!block.invoke(value)) {
+            return
+        }
+        branches += MatcherBranch(value = value, result = result)
     }
 
     @JvmName("caseType")
     inline fun <reified T> case(block: (T) -> Boolean = { true }, noinline result: T.() -> R) {
         (value as? T)?.apply {
-            branches += MatcherBranch(value = this, bool = block.invoke(this), result = result)
+            if (!block.invoke(this)) {
+                return
+            }
+            branches += MatcherBranch(value = this, result = result)
         }
     }
 
     fun default(result: R) {
-        branches += MatcherBranch(value = value, bool = true, result = { result })
+        branches += MatcherBranch(value = value, result = { result }, isDefault = true)
     }
 
     fun match(): R {
-        return branches.firstNotNullOfOrNull { it.get() } ?: error("Match error.")
+        return branches
+            .filter { !it.isDefault }
+            .firstNotNullOfOrNull { it.get() } ?: branches.find { it.isDefault }?.get() ?: error("Match error.")
     }
 }
 
-class MatcherBranch<R, O>(val value: O, val bool: Boolean, val result: O.() -> R) {
+class MatcherBranch<R, O>(val value: O, val result: O.() -> R, val isDefault: Boolean = false) {
 
-    fun get(): R? {
-        return when {
-            bool -> result.invoke(value)
-            else -> null
-        }
-    }
+    fun get() = result.invoke(value)
 }
 
 fun <R, O> matcher(value: O, func: Matcher<R, O>.() -> Unit): Matcher<R, O> {
@@ -40,7 +43,7 @@ fun <R, O> matcher(value: O, func: Matcher<R, O>.() -> Unit): Matcher<R, O> {
 
 @JvmName("extensionMatcher")
 fun <R, O> O.matcher(func: Matcher<R, O>.() -> Unit): Matcher<R, O> {
-    return Matcher<R, O>(this).apply {
-        func.invoke(this)
+    return Matcher<R, O>(this).also {
+        func.invoke(it)
     }
 }
