@@ -4,25 +4,24 @@ class Matcher<R, O>(val value: O) {
 
     private var default: R? = null
 
-    fun case(block: (O) -> Boolean, result: O.() -> R) {
+    fun case(block: (O) -> Boolean, resultBlock: O.() -> R) {
         if (!block.invoke(value)) {
             return
         }
-        if (this.result == null) this.result = result.invoke(value)
+        if (result == null) result = resultBlock.invoke(value)
     }
 
     @JvmName("caseType")
-    inline fun <reified T> case(block: (T) -> Boolean = { true }, noinline result: T.() -> R) {
-        (value as? T)?.apply {
-            if (!block.invoke(this)) {
-                return
-            }
-            if (this@Matcher.result == null) this@Matcher.result = result.invoke(this)
+    inline fun <reified T> case(block: (T) -> Boolean = { true }, noinline resultBlock: T.() -> R) {
+        val casted = value as? T ?: return
+        if (!block.invoke(casted)) {
+            return
         }
+        if (result == null) result = resultBlock.invoke(casted)
     }
 
-    fun default(result: R) {
-        this.default = result
+    fun default(defaultResult: R) {
+        default = defaultResult
     }
 
     fun match(): R {
