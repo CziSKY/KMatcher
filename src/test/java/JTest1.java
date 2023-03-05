@@ -9,6 +9,5 @@ public class JTest1 {
             m.caseDefault("Unknown");
             return m;
         }).match();
-        System.out.println(result);
     }
 }
