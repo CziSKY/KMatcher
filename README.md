@@ -22,7 +22,7 @@ fun print() {
 }
 ```
 
-And the java implements (JMatcher.java):
+And the java implementation (JMatcher.java):
 
 ```java
 public void print() {
