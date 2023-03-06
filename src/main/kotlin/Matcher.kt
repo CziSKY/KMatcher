@@ -2,7 +2,7 @@ class Matcher<R, O>(val value: O) {
 
     var result: R? = null
 
-    private var default: R? = null
+    var default: R? = null
 
     fun case(block: (O) -> Boolean, resultBlock: O.() -> R) {
         if (!block.invoke(value)) {

@@ -1,13 +1,11 @@
 public class JTest1 {
 
     public static void main(String[] args) {
-        int num = 20;
-        JMatcher<Integer, String> test = JMatcherUtil.matcher(num, m -> {
+        JMatcher<Integer, String> test = JMatcherUtil.create(20, m -> {
             m.casePredicate(i -> i > 0 && i <= 10, i -> "Small");
             m.caseType(Integer.class, i -> i > 10 && i <= 100, i -> "Medium");
             m.caseType(Double.class, d -> d > 100, d -> "Large");
             m.caseDefault("Unknown");
-            return m;
         });
         System.out.println(test.match());
     }
