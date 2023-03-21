@@ -27,7 +27,7 @@ And the java implementation (JMatcher.java):
 ```java
 public void print() {
     int num = 20;
-    var result = JMatcherUtil.matcher(num, m -> {
+    var result = JMatcherUtil.create(num, m -> {
         m.casePredicate(i -> i > 0 && i <= 10, i -> "Small");
         m.caseType(Integer.class, i -> i > 10 && i <= 100, i -> "Medium");
         m.caseType(Double.class, d -> d > 100, d -> "Large");
